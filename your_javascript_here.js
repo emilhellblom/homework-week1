@@ -1,5 +1,5 @@
 // Variables
-var  hero = {
+var hero = {
   name: 'Varriot',
   heroic: true,
   inventory: ['Unyielding armor', 'Cloak of Agatosh'],
@@ -12,13 +12,11 @@ var  hero = {
 // Game logic
 function rest(creature) {
   creature.health = 10;
-  console.log('checking rest function', creature)
   return creature
 }
 
 function pickUpItem(creature, item) {
   creature.inventory.push(item);
-  console.log('checking pickUpItem function', creature)
   return creature
 }
 
@@ -30,7 +28,6 @@ function dealDamage(attacker, defender) {
 function equipWeapon(creature, index) {
   creature.weapon = creature.inventory[index];
   creature.inventory.pop(index);
-  console.log('checking equipWeapon function', creature.inventory, creature.weapon)
   return creature
 }
 
@@ -49,38 +46,97 @@ function doBattle(heroicCreature, creature) {
     return heroicCreature
   }
 }
-// UI
+
+function displayStats(creature) {
+  var ul = document.createElement('ul')
+  var body = document.querySelector('body')
+  var name = document.createElement('li')
+  var arr = ['name', 'health', 'weapon']
+  ul.setAttribute('id', 'stats-list')
+
+  for (var item in creature) {
+    if (arr.includes(item)) {
+      var li = document.createElement('li');
+      if (item === 'weapon') {
+        var text = document.createTextNode(creature[item]['damage'])
+        var li2 = document.createElement('li')
+        var text2 = document.createTextNode(creature[item]['type'])
+        li2.appendChild(text2)
+        ul.appendChild(li2)
+      } else {
+        var text = document.createTextNode(creature[item]);
+      }
+      li.appendChild(text)
+      ul.appendChild(li)
+    }
+  }
+  body.appendChild(ul);
+}
+
+function displayInventory(creature) {
+  var i = 0;
+  var body = document.querySelector('body')
+  var ul = document.createElement('ul')
+  let text = document.createTextNode('Inventory:')
+
+  while (i < creature.inventory.length) {
+    var li = document.createElement('li')
+    if (typeof creature.inventory[i] === "object") {
+      var content = document.createTextNode(creature.inventory[i].type)
+    } else {
+    var content = document.createTextNode(creature.inventory[i])
+  }
+    li.appendChild(content)
+    ul.appendChild(li)
+    i++;
+  }
+  body.appendChild(ul)
+}
+
+function updateStats() {
+  displayStats(hero);
+  displayInventory(hero);
+}
+
+function updateName(e) {
+  e.preventDefault();
+  hero.name = e.target.value
+  updateStats();
+}
+
+//UI
+
 var div = document.createElement('div')
 var image = document.createElement('img')
 var body = document.querySelector('body')
 body.appendChild(div)
 div.appendChild(image)
 document.getElementsByTagName('img')[0].setAttribute('src', 'inn.jpeg')
-document.getElementsByTagName('img')[0].setAttribute('onclick', 'rest(hero)')
-
+document.getElementsByTagName('img')[0].setAttribute('onclick', 'rest(hero), updateStats()')
 var image2 = document.createElement('img')
 div.appendChild(image2)
 document.getElementsByTagName('img')[1].setAttribute('src', 'bow.jpeg')
-document.getElementsByTagName('img')[1].setAttribute('onclick', 'pickUpItem(hero, {type: "Bow", damage:"9"})')
+document.getElementsByTagName('img')[1].setAttribute('onclick', 'pickUpItem(hero, {type: "Bow", damage:"9"}), updateStats()')
 
 var image3 = document.createElement('img')
 div.appendChild(image3)
 document.getElementsByTagName('img')[2].setAttribute('src', 'boar.jpeg')
-document.getElementsByTagName('img')[2].setAttribute('onclick', 'doBattle(hero, {health: 5, weapon: {type: "tusk", damage: "4"}})')
+document.getElementsByTagName('img')[2].setAttribute('onclick', 'doBattle(hero, {health: 50, weapon: {type: "tusk", damage: "4"}}), updateStats()')
 
 var image4 = document.createElement('img')
 div.appendChild(image4)
 document.getElementsByTagName('img')[3].setAttribute('src', 'backpack.jpeg')
-document.getElementsByTagName('img')[3].setAttribute('onclick', 'equipWeapon(hero, window.prompt("What is the index of the item that you want to equip?"))')
+document.getElementsByTagName('img')[3].setAttribute('onclick', 'equipWeapon(hero, window.prompt("What is the index of the item that you want to equip?")), updateStats()')
 
-function displayStats(char) {
-    document.write('Stats:' + '<br />')
-    document.write('Name: ' + char.name + '<br />')
-    document.write('Health: ' + char.health + '<br />')
-    document.write('Weapon: ' + char.weapon.type + '<br />')
-    document.write('Damage: ' + char.weapon.damage + '<br />')
-}
+var input = document.createElement('input')
+var button = document.createElement('button')
+var form = document.createElement('form')
+input.setAttribute('type', 'text')
+input.setAttribute('onchange', 'updateName(event)')
+form.appendChild(input)
+body.appendChild(form)
 
 
 
 displayStats(hero)
+displayInventory(hero)

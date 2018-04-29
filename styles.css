@@ -1,8 +1,10 @@
 div {
   display: flex;
+  animation-fill-mode: forwards;
 }
 
 img {
+  animation-fill-mode: forwards;
   justify-content: center;
   height: 200px;
   width: auto;
